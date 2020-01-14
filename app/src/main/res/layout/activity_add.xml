@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,96 +15,158 @@
             android:id="@+id/timepicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:timePickerMode="clock"/>
+            android:timePickerMode="clock" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:textStyle="bold"
+        android:layout_height="120dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
         android:paddingLeft="15dp"
-        android:orientation="vertical">
+        android:textStyle="bold">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/repeat"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:text="@string/repeat"/>
-        <TextView
-            android:id="@+id/textview_days"
+            android:textStyle="bold" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="매주 월, 화, 수, 목, 금"
-            android:textSize="14sp"/>
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textview_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="매주 "
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textview_mon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:visibility="gone"
+                android:text="@string/mon"/>
+
+            <TextView
+                android:id="@+id/textview_tue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:visibility="gone"
+                android:text="@string/tue"/>
+            <TextView
+                android:id="@+id/textview_wed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:visibility="gone"
+                android:text="@string/wed"/>
+            <TextView
+                android:id="@+id/textview_thu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:visibility="gone"
+                android:text="@string/thu"/>
+            <TextView
+                android:id="@+id/textview_fri"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:visibility="gone"
+                android:text="@string/fri"/>
+            <TextView
+                android:id="@+id/textview_sat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:visibility="gone"
+                android:text="@string/sat"/>
+            <TextView
+                android:id="@+id/textview_sun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="@string/sun"/>
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/button_sun"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="@string/sun"
-                android:layout_marginRight="5dp"
-                android:shadowColor="@color/colorWhite"
-                android:background="@drawable/button_selector"/>
 
             <Button
                 android:id="@+id/button_mon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:text="@string/mon"
                 android:layout_marginRight="5dp"
+                android:background="@drawable/button_unselect"
                 android:shadowColor="@color/colorWhite"
-                android:background="@drawable/button_selector"/>
+                android:text="@string/mon" />
 
             <Button
                 android:id="@+id/button_tue"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:text="@string/tue"
                 android:layout_marginRight="5dp"
+                android:background="@drawable/button_unselect"
                 android:shadowColor="@color/colorWhite"
-                android:background="@drawable/button_selector"/>
+                android:text="@string/tue" />
 
             <Button
                 android:id="@+id/button_wed"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:text="@string/wed"
                 android:layout_marginRight="5dp"
+                android:background="@drawable/button_unselect"
                 android:shadowColor="@color/colorWhite"
-                android:background="@drawable/button_selector"/>
+                android:text="@string/wed" />
 
             <Button
                 android:id="@+id/button_thu"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:text="@string/thu"
                 android:layout_marginRight="5dp"
+                android:background="@drawable/button_unselect"
                 android:shadowColor="@color/colorWhite"
-                android:background="@drawable/button_selector"/>
+                android:text="@string/thu" />
 
             <Button
                 android:id="@+id/button_fri"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:text="@string/fri"
                 android:layout_marginRight="5dp"
+                android:background="@drawable/button_unselect"
                 android:shadowColor="@color/colorWhite"
-                android:background="@drawable/button_selector"/>
+                android:text="@string/fri" />
 
             <Button
                 android:id="@+id/button_sat"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:text="@string/sat"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/button_unselect"
                 android:shadowColor="@color/colorWhite"
-                android:background="@drawable/button_selector"/>
+                android:text="@string/sat" />
+
+            <Button
+                android:id="@+id/button_sun"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/button_unselect"
+                android:shadowColor="@color/colorWhite"
+                android:text="@string/sun" />
 
         </LinearLayout>
 
@@ -114,17 +175,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginRight="16sp"
+        android:layout_marginTop="20dp"
+        android:gravity="right"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/button_cancel"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:text="@string/cancel"/>
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+
+            android:layout_marginRight="5dp"
+            android:text="@string/cancel" />
+
         <Button
             android:id="@+id/button_save"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:text="@string/save"/>
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="@string/save" />
 
     </LinearLayout>
 
