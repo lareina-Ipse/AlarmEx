@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,22 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import kr.co.chience.alarmex.AddActivity;
-import kr.co.chience.alarmex.MainActivity;
 import kr.co.chience.alarmex.R;
 import kr.co.chience.alarmex.Util.LogUtil;
 import kr.co.chience.alarmex.model.Alarm;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHoler> {
 
-    private ArrayList<Alarm> items = new ArrayList<Alarm>();
     Context context;
+    ArrayList<Alarm> items;
 
-    public AlarmAdapter(ArrayList<Alarm> items) {
+    public AlarmAdapter(Context context, ArrayList<Alarm> items) {
+        this.context = context;
         this.items = items;
-    }
-
-    public AlarmAdapter() {
-
     }
 
     @NonNull
@@ -49,7 +45,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
         Alarm item = items.get(position);
         holder.time.setText(items.get(position).getTime());
-      //  holder.days.setText(items.get(position).getDays());
+        holder.mon.setText(items.get(position).getMon());
+        holder.tue.setText(items.get(position).getTue());
+        holder.wed.setText(items.get(position).getWed());
+        holder.thu.setText(items.get(position).getThu());
+        holder.fri.setText(items.get(position).getFri());
+        holder.sat.setText(items.get(position).getSat());
+        holder.sun.setText(items.get(position).getSun());
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -66,6 +68,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             }
         });
 
+      //  holder.aSwitch.set;
+
     }
 
     @Override
@@ -78,6 +82,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         TextView time;
         TextView days;
         TextView mon, tue, wed, thu, fri, sat, sun;
+        Switch aSwitch;
 
         public AlarmViewHoler(@NonNull View itemView) {
             super(itemView);
@@ -92,6 +97,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             fri = itemView.findViewById(R.id.textview_fri);
             sat = itemView.findViewById(R.id.textview_sat);
             sun = itemView.findViewById(R.id.textview_sun);
+
+            aSwitch = itemView.findViewById(R.id.switch_onoff);
 
         }
     }

@@ -34,61 +34,52 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/textview_days"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="매주 "
-                    android:textSize="14sp" />
-
-                <TextView
                     android:id="@+id/textview_mon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-                    android:visibility="gone"
-                    android:text="@string/mon"/>
+                    android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/textview_tue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-                    android:visibility="gone"
-                    android:text="@string/tue"/>
+                    android:visibility="visible" />
+
                 <TextView
                     android:id="@+id/textview_wed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-                    android:visibility="gone"
-                    android:text="@string/wed"/>
+                    android:visibility="gone" />
+
                 <TextView
                     android:id="@+id/textview_thu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-                    android:visibility="gone"
-                    android:text="@string/thu"/>
+                    android:visibility="visible" />
+
                 <TextView
                     android:id="@+id/textview_fri"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-                    android:visibility="gone"
-                    android:text="@string/fri"/>
+                    android:visibility="visible" />
+
                 <TextView
                     android:id="@+id/textview_sat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-                    android:visibility="gone"
-                    android:text="@string/sat"/>
+                    android:visibility="visible" />
+
                 <TextView
                     android:id="@+id/textview_sun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:text="@string/sun"/>
+                    android:visibility="visible" />
 
             </LinearLayout>
 
@@ -103,7 +94,8 @@
             <Switch
                 android:id="@+id/switch_onoff"
                 android:layout_width="50dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:checked="true"/>
 
         </LinearLayout>
 

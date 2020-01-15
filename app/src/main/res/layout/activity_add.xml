@@ -51,50 +51,55 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
-                android:visibility="gone"
-                android:text="@string/mon"/>
+                android:text="@string/mon"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/textview_tue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
-                android:visibility="gone"
-                android:text="@string/tue"/>
+                android:text="@string/tue"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/textview_wed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
-                android:visibility="gone"
-                android:text="@string/wed"/>
+                android:text="@string/wed"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/textview_thu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
-                android:visibility="gone"
-                android:text="@string/thu"/>
+                android:text="@string/thu"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/textview_fri"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
-                android:visibility="gone"
-                android:text="@string/fri"/>
+                android:text="@string/fri"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/textview_sat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
-                android:visibility="gone"
-                android:text="@string/sat"/>
+                android:text="@string/sat"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/textview_sun"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:text="@string/sun"/>
+                android:text="@string/sun"
+                android:visibility="gone" />
 
         </LinearLayout>
 
@@ -175,10 +180,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginRight="16sp"
         android:layout_marginTop="20dp"
+        android:layout_marginRight="16sp"
         android:gravity="right"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="RtlHardcoded">
 
         <Button
             android:id="@+id/button_cancel"
@@ -188,11 +194,19 @@
             android:layout_marginRight="5dp"
             android:text="@string/cancel" />
 
+
         <Button
             android:id="@+id/button_save"
             android:layout_width="100dp"
             android:layout_height="50dp"
-            android:text="@string/save" />
+            android:text="@string/save"/>
+
+        <Button
+            android:id="@+id/button_delete"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="@string/delete"
+            android:visibility="gone" />
 
     </LinearLayout>
 

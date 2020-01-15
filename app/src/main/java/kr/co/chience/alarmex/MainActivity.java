@@ -1,22 +1,22 @@
 package kr.co.chience.alarmex;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import kr.co.chience.alarmex.Util.LogUtil;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import kr.co.chience.alarmex.adapter.AlarmAdapter;
 import kr.co.chience.alarmex.base.BaseInterface;
+import kr.co.chience.alarmex.clud.CRUDAlarm;
 import kr.co.chience.alarmex.model.Alarm;
 
 public class MainActivity extends AppCompatActivity implements BaseInterface, View.OnClickListener {
@@ -31,9 +31,11 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
     int hour, minute;
     String time;
     Intent intent;
-    boolean mon, tue, wed, thu, fri, sat, sun = false;
+    String mon, tue, wed, thu, fri, sat, sun = "";
     TextView textViewMon, textViewTue, textViewWed, textViewThu, textViewFri, textViewSat, textViewSun;
-
+    Realm realm;
+    RealmChangeListener realmChangeListener;
+    CRUDAlarm.ItemAlarm itemAlarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +55,11 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        arrayList = new ArrayList<>();
-        mAdapter = new AlarmAdapter(arrayList);
+        arrayList = new ArrayList<Alarm>();
+        realm = Realm.getDefaultInstance();
+        itemAlarm = new CRUDAlarm.ItemAlarm(realm);
+        itemAlarm.selectFromDB();
+        mAdapter = new AlarmAdapter(this, itemAlarm.justRefresh());
         buttonAdd = findViewById(R.id.button_add);
         textViewMon = findViewById(R.id.textview_mon);
         textViewTue = findViewById(R.id.textview_tue);
@@ -78,58 +83,10 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
 
     @Override
     public void initProcess() {
-
-        if (!textViewMon.equals(null)) {
-            addItem(time);
-        }
+        reFresh();
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
-    }
-
-    public void addItem(String time) {
-        intent = getIntent();
-        hour = intent.getIntExtra("hour", 0);
-        minute = intent.getIntExtra("minute", 0);
-        mon = intent.getBooleanExtra("mon", false);
-        tue = intent.getBooleanExtra("tue", false);
-        wed = intent.getBooleanExtra("wed", false);
-        thu = intent.getBooleanExtra("thu", false);
-        fri = intent.getBooleanExtra("fri", false);
-        sat = intent.getBooleanExtra("sat", false);
-        sun = intent.getBooleanExtra("sun", false);
-
-        time = String.format("%d : %d", hour, minute);
-
-        if (!textViewMon.equals(null)) {
-            checkDays(mon, textViewMon);
-            checkDays(tue, textViewTue);
-            checkDays(wed, textViewWed);
-            checkDays(thu, textViewThu);
-            checkDays(fri, textViewFri);
-            checkDays(sat, textViewSat);
-            checkDays(sun, textViewSun);
-        }
-
-        LogUtil.e(TAG, "hour :::::: " + hour);
-        LogUtil.e(TAG, "minute :::::: " + minute);
-        LogUtil.e(TAG, "mon :::::: " + mon);
-        LogUtil.e(TAG, "tue :::::: " + tue);
-        LogUtil.e(TAG, "wed :::::: " + wed);
-        LogUtil.e(TAG, "thu :::::: " + thu);
-        LogUtil.e(TAG, "fri :::::: " + fri);
-        LogUtil.e(TAG, "sat :::::: " + sat);
-        LogUtil.e(TAG, "sun :::::: " + sun);
-
-
-    }
-
-    public void checkDays(boolean day, TextView textView) {
-        if (day) {
-            textView.setVisibility(View.VISIBLE);
-        } else {
-            textView.setVisibility(View.GONE);
-        }
     }
 
 
@@ -137,14 +94,27 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_add:
-                Intent intent = new Intent(getApplicationContext(), AddActivity.class);
-                startActivity(intent);
-
+                startActivity(new Intent(getApplicationContext(), AddActivity.class));
                 break;
         }
     }
 
+    private void reFresh() {
+        realmChangeListener = new RealmChangeListener() {
+            @Override
+            public void onChange(Object o) {
+                AlarmAdapter alarmAdapter = new AlarmAdapter(MainActivity.this, itemAlarm.justRefresh());
+                mRecyclerView.setAdapter(alarmAdapter);
+            }
+        };
+        realm.addChangeListener(realmChangeListener);
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.removeAllChangeListeners();
+        realm.close();
+    }
 
 }

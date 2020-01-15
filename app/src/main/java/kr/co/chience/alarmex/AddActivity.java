@@ -16,6 +16,8 @@ import java.util.Calendar;
 
 import kr.co.chience.alarmex.Util.LogUtil;
 import kr.co.chience.alarmex.base.BaseInterface;
+import kr.co.chience.alarmex.clud.CRUDAlarm;
+import kr.co.chience.alarmex.model.Alarm;
 
 public class AddActivity extends AppCompatActivity implements BaseInterface, View.OnClickListener {
 
@@ -27,10 +29,12 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     Intent intent;
     Button buttonSave;
     Button buttonCancel;
+    Button buttonDelete;
     boolean mon, tue, wed, thu, fri, sat, sun = false;
+    String sMon, sTue, sWed, sThu, sFri, sSat, sSun = null;
     Button buttonMon, buttonTue, buttonWed, buttonThu, buttonFri, buttonSat, buttonSun;
     TextView textViewMon, textViewTue, textViewWed, textViewThu, textViewFri, textViewSat, textViewSun;
-
+    Alarm alarm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         timePicker = findViewById(R.id.timepicker);
         buttonSave = findViewById(R.id.button_save);
         buttonCancel = findViewById(R.id.button_cancel);
+        buttonDelete = findViewById(R.id.button_delete);
         buttonMon = findViewById(R.id.button_mon);
         buttonTue = findViewById(R.id.button_tue);
         buttonWed = findViewById(R.id.button_wed);
@@ -63,8 +68,8 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         textViewFri = findViewById(R.id.textview_fri);
         textViewSat = findViewById(R.id.textview_sat);
         textViewSun = findViewById(R.id.textview_sun);
-
         intent = getIntent();
+        alarm = new Alarm();
     }
 
     @Override
@@ -101,21 +106,26 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_save:
+
                 aHourday = timePicker.getHour();
                 aMinute = timePicker.getMinute();
-                Intent intent;
-                //세이브 버튼이 눌리면서, time과 요일의 값을 MainActivity에 보내줘야한다.
-                intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("hour", aHourday);
-                intent.putExtra("minute", aMinute);
-                intent.putExtra("mon", mon);
-                intent.putExtra("tue", tue);
-                intent.putExtra("wed", wed);
-                intent.putExtra("thu", thu);
-                intent.putExtra("fri", fri);
-                intent.putExtra("sat", sat);
-                intent.putExtra("sun", sun);
-                startActivity(intent);
+
+                String time = String.format("%d : %d", aHourday, aMinute);
+
+                alarm.setMon(sMon);
+                alarm.setTue(sTue);
+                alarm.setWed(sWed);
+                alarm.setThu(sThu);
+                alarm.setFri(sFri);
+                alarm.setSat(sSat);
+                alarm.setSun(sSun);
+                alarm.setTime(time);
+
+                CRUDAlarm.addAlarm(alarm);
+                CRUDAlarm.readAllAlarm();
+
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
                 break;
             case R.id.button_cancel:
                 intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -125,6 +135,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                 if (!mon) {
                     mon = true;
                     buttonSetColor(mon, buttonMon, textViewMon);
+                    sMon = "월";
                 } else {
                     mon = false;
                     buttonSetColor(mon, buttonMon, textViewMon);
@@ -134,6 +145,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                 if (!tue) {
                     tue = true;
                     buttonSetColor(tue, buttonTue, textViewTue);
+                    sTue = "화";
                 } else {
                     tue = false;
                     buttonSetColor(tue, buttonTue, textViewTue);
@@ -143,15 +155,18 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                 if (!wed) {
                     wed = true;
                     buttonSetColor(wed, buttonWed, textViewWed);
+                    sWed = "수";
                 } else {
                     wed = false;
                     buttonSetColor(wed, buttonWed, textViewWed);
+
                 }
                 break;
             case R.id.button_thu:
                 if (!thu) {
                     thu = true;
                     buttonSetColor(thu, buttonThu, textViewThu);
+                    sThu = "목";
                 } else {
                     thu = false;
                     buttonSetColor(thu, buttonThu, textViewThu);
@@ -161,6 +176,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                 if (!fri) {
                     fri = true;
                     buttonSetColor(fri, buttonFri, textViewFri);
+                    sFri = "금";
                 } else {
                     fri = false;
                     buttonSetColor(fri, buttonFri, textViewFri);
@@ -170,15 +186,17 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                 if (!sat) {
                     sat = true;
                     buttonSetColor(sat, buttonSat, textViewSat);
+                    sSat = "토";
                 } else {
                     sat = false;
-                    buttonSetColor(sat, buttonSat,textViewSat);
+                    buttonSetColor(sat, buttonSat, textViewSat);
                 }
                 break;
             case R.id.button_sun:
                 if (!sun) {
                     sun = true;
                     buttonSetColor(sun, buttonSun, textViewSun);
+                    sSun = "일";
                 } else {
                     sun = false;
                     buttonSetColor(sun, buttonSun, textViewSun);
@@ -192,8 +210,11 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     public void buttonSetText(boolean activity) {
         if (activity) {
             buttonSave.setText(R.string.save);
+            buttonDelete.setVisibility(View.GONE);
         } else {
             buttonSave.setText(R.string.modify);
+            buttonDelete.setVisibility(View.VISIBLE);
+
         }
     }
 
@@ -201,6 +222,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         if (!color) {
             button.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.button_unselect));
             textView.setVisibility(View.GONE);
+
         } else {
             button.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.button_select));
             textView.setVisibility(View.VISIBLE);
