@@ -5,8 +5,6 @@ import io.realm.annotations.PrimaryKey;
 
 public class Alarm extends RealmObject {
 
-    @PrimaryKey
-    int no;
     String time;
     String mon;
     String tue;
@@ -15,9 +13,13 @@ public class Alarm extends RealmObject {
     String fri;
     String sat;
     String sun;
+    int position;
 
-    public Alarm(int no, String time, String mon, String tue, String wed, String thu, String fri, String sat, String sun) {
-        this.no = no;
+    public Alarm() {
+
+    }
+
+    public Alarm(String time, String mon, String tue, String wed, String thu, String fri, String sat, String sun, int position) {
         this.time = time;
         this.mon = mon;
         this.tue = tue;
@@ -26,21 +28,7 @@ public class Alarm extends RealmObject {
         this.fri = fri;
         this.sat = sat;
         this.sun = sun;
-    }
-
-    public Alarm() {
-
-    }
-
-    public Alarm(String time, String mon, String tue, String wed, String thu, String fri, String sat, String sun) {
-    }
-
-    public int getNo() {
-        return no;
-    }
-
-    public void setNo(int no) {
-        this.no = no;
+        this.position = position;
     }
 
     public String getTime() {
@@ -105,5 +93,13 @@ public class Alarm extends RealmObject {
 
     public void setSun(String sun) {
         this.sun = sun;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

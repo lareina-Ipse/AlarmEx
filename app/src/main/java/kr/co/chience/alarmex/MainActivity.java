@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
     int hour, minute;
     String time;
     Intent intent;
-    String mon, tue, wed, thu, fri, sat, sun = "";
     TextView textViewMon, textViewTue, textViewWed, textViewThu, textViewFri, textViewSat, textViewSun;
     Realm realm;
     RealmChangeListener realmChangeListener;

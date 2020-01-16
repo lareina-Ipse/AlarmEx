@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import kr.co.chience.alarmex.model.Alarm;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHoler> {
 
+    private static final String TAG = AlarmAdapter.class.getSimpleName();
     Context context;
     ArrayList<Alarm> items;
 
@@ -53,22 +55,20 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         holder.sat.setText(items.get(position).getSat());
         holder.sun.setText(items.get(position).getSun());
 
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogUtil.e("WhereAreYou", items.get(position).getTime());
+                LogUtil.e(TAG, items.get(position).getTime());
+                LogUtil.e(TAG, "position :::: " + position);
                 Intent intent = new Intent(context, AddActivity.class);
                 String time = items.get(position).getTime();
-        //        String days = items.get(position).getDays();
                 intent.putExtra("time", time);
-        //        intent.putExtra("days", days);
+                intent.putExtra("position", position);
                 intent.putExtra("activity", false);
                 context.startActivity(intent);
             }
         });
 
-      //  holder.aSwitch.set;
 
     }
 
@@ -83,6 +83,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         TextView days;
         TextView mon, tue, wed, thu, fri, sat, sun;
         Switch aSwitch;
+
+
 
         public AlarmViewHoler(@NonNull View itemView) {
             super(itemView);

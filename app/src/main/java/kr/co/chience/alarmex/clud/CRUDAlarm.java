@@ -1,28 +1,18 @@
 package kr.co.chience.alarmex.clud;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import kr.co.chience.alarmex.Util.LogUtil;
 import kr.co.chience.alarmex.model.Alarm;
 
 public class CRUDAlarm {
 
     private static final String TAG = CRUDAlarm.class.getSimpleName();
-
-    //인덱스
-    private final static int alarmIndex() {
-        Realm realm = Realm.getDefaultInstance();
-        Number currentIdNum = realm.where(Alarm.class).max("no");
-        int nextId;
-        if (currentIdNum == null) {
-            nextId = 0;
-        } else {
-            nextId = currentIdNum.intValue() + 1;
-        }
-        return nextId;
-    }
 
     //데이터 저장
     public final static void addAlarm(final Alarm alarm) {
@@ -30,8 +20,7 @@ public class CRUDAlarm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                int index = CRUDAlarm.alarmIndex();
-                Alarm realmAlarm = realm.createObject(Alarm.class, index);
+                Alarm realmAlarm = realm.createObject(Alarm.class);
                 realmAlarm.setTime(alarm.getTime());
                 realmAlarm.setMon(alarm.getMon());
                 realmAlarm.setTue(alarm.getTue());
@@ -40,6 +29,19 @@ public class CRUDAlarm {
                 realmAlarm.setFri(alarm.getFri());
                 realmAlarm.setSat(alarm.getSat());
                 realmAlarm.setSun(alarm.getSun());
+                realmAlarm.setPosition(alarm.getPosition());
+
+                LogUtil.e(TAG, "time :::: " + alarm.getTime());
+                LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
+                LogUtil.e(TAG, "Tue :::: " + alarm.getTue());
+                LogUtil.e(TAG, "Wed :::: " + alarm.getWed());
+                LogUtil.e(TAG, "Thu :::: " + alarm.getThu());
+                LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
+                LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
+                LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
+                LogUtil.e(TAG, "Position :::: " + alarm.getPosition());
+                LogUtil.e(TAG, "===============================================================");
+
             }
         });
     }
@@ -48,7 +50,60 @@ public class CRUDAlarm {
     public final static List<Alarm> readAllAlarm() {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Alarm> alarms = realm.where(Alarm.class).findAll();
+        for (Alarm alarm : alarms) {
+
+        }
+
         return alarms;
+    }
+
+    public final static void updateId(int position) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Alarm alarm = realm.where(Alarm.class).equalTo("position", position).findFirst();
+
+        alarm.setPosition(position - 1);
+
+        realm.insertOrUpdate(alarm);
+        realm.commitTransaction();
+
+    }
+
+    public final static void updateInfo(int position, String time,
+                                        String mon, String tue,
+                                        String wed, String thu,
+                                        String fri, String sat,
+                                        String sun) {
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();;
+        Alarm alarm = realm.where(Alarm.class).equalTo("position", position).findFirst();
+
+        alarm.setTime(time);
+        alarm.setMon(mon);
+        alarm.setTue(tue);
+        alarm.setWed(wed);
+        alarm.setThu(thu);
+        alarm.setFri(fri);
+        alarm.setSat(sat);
+        alarm.setSun(sun);
+
+        realm.insertOrUpdate(alarm);
+        realm.commitTransaction();
+
+        LogUtil.e(TAG, "============================수정===============================");
+        LogUtil.e(TAG, "time :::: " + alarm.getTime());
+        LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
+        LogUtil.e(TAG, "Tue :::: " + alarm.getTue());
+        LogUtil.e(TAG, "Wed :::: " + alarm.getWed());
+        LogUtil.e(TAG, "Thu :::: " + alarm.getThu());
+        LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
+        LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
+        LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
+        LogUtil.e(TAG, "Position :::: " + alarm.getPosition());
+        LogUtil.e(TAG, "===============================================================");
+
+
     }
 
     //받아온 데이터 Recyclerview에 보여주기
@@ -68,8 +123,18 @@ public class CRUDAlarm {
             ArrayList<Alarm> listItem = new ArrayList<>();
             for (Alarm alarm : alarms) {
                 listItem.add(alarm);
+
             }
             return listItem;
         }
     }
+
+    public final static void deleteAlarm(int position) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Alarm alarm = realm.where(Alarm.class).equalTo("position", position).findFirst();
+        alarm.deleteFromRealm();
+        realm.commitTransaction();
+    }
 }
+

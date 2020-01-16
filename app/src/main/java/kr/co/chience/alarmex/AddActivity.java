@@ -4,16 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import java.nio.channels.InterruptedByTimeoutException;
-import java.sql.Time;
 import java.util.Calendar;
+import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import kr.co.chience.alarmex.Util.LogUtil;
 import kr.co.chience.alarmex.base.BaseInterface;
 import kr.co.chience.alarmex.clud.CRUDAlarm;
@@ -35,6 +35,11 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     Button buttonMon, buttonTue, buttonWed, buttonThu, buttonFri, buttonSat, buttonSun;
     TextView textViewMon, textViewTue, textViewWed, textViewThu, textViewFri, textViewSat, textViewSun;
     Alarm alarm;
+    int itemPostion;
+    int position;
+    Realm realm;
+    List<Alarm> datas;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +75,15 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         textViewSun = findViewById(R.id.textview_sun);
         intent = getIntent();
         alarm = new Alarm();
+        realm = Realm.getDefaultInstance();
+        datas = CRUDAlarm.readAllAlarm();
     }
 
     @Override
     public void initListener() {
         buttonSave.setOnClickListener(this);
         buttonCancel.setOnClickListener(this);
+        buttonDelete.setOnClickListener(this);
         buttonMon.setOnClickListener(this);
         buttonTue.setOnClickListener(this);
         buttonWed.setOnClickListener(this);
@@ -83,9 +91,6 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         buttonFri.setOnClickListener(this);
         buttonSat.setOnClickListener(this);
         buttonSun.setOnClickListener(this);
-
-
-
     }
 
     @Override
@@ -93,12 +98,12 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         timePicker.setIs24HourView(true);
         timePicker.setCurrentHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
         activity = intent.getBooleanExtra("activity", true);
+        itemPostion = intent.getIntExtra("position", 100);
     }
 
     @Override
     public void initProcess() {
         buttonSetText(activity);
-
 
     }
 
@@ -106,31 +111,32 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_save:
+                if (!activity) {
+                    modifyData();
+                } else {
+                    saveData();
+                }
+                break;
 
-                aHourday = timePicker.getHour();
-                aMinute = timePicker.getMinute();
+            case R.id.button_cancel:
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                break;
 
-                String time = String.format("%d : %d", aHourday, aMinute);
+            case R.id.button_delete:
+                LogUtil.e(TAG, "position :::: " + itemPostion);
 
-                alarm.setMon(sMon);
-                alarm.setTue(sTue);
-                alarm.setWed(sWed);
-                alarm.setThu(sThu);
-                alarm.setFri(sFri);
-                alarm.setSat(sSat);
-                alarm.setSun(sSun);
-                alarm.setTime(time);
-
-                CRUDAlarm.addAlarm(alarm);
-                CRUDAlarm.readAllAlarm();
+                CRUDAlarm.deleteAlarm(itemPostion);
+                if (datas.size() > itemPostion) {
+                    itemPostion++;
+                    for (int i = itemPostion; itemPostion <= datas.size(); i++) {
+                        RealmResults<Alarm> alarm = realm.where(Alarm.class).findAll();
+                        CRUDAlarm.updateId(itemPostion);
+                    }
+                }
 
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                break;
 
-                break;
-            case R.id.button_cancel:
-                intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                break;
             case R.id.button_mon:
                 if (!mon) {
                     mon = true;
@@ -141,6 +147,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                     buttonSetColor(mon, buttonMon, textViewMon);
                 }
                 break;
+
             case R.id.button_tue:
                 if (!tue) {
                     tue = true;
@@ -151,6 +158,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                     buttonSetColor(tue, buttonTue, textViewTue);
                 }
                 break;
+
             case R.id.button_wed:
                 if (!wed) {
                     wed = true;
@@ -159,9 +167,9 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                 } else {
                     wed = false;
                     buttonSetColor(wed, buttonWed, textViewWed);
-
                 }
                 break;
+
             case R.id.button_thu:
                 if (!thu) {
                     thu = true;
@@ -172,6 +180,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                     buttonSetColor(thu, buttonThu, textViewThu);
                 }
                 break;
+
             case R.id.button_fri:
                 if (!fri) {
                     fri = true;
@@ -182,6 +191,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                     buttonSetColor(fri, buttonFri, textViewFri);
                 }
                 break;
+
             case R.id.button_sat:
                 if (!sat) {
                     sat = true;
@@ -192,6 +202,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                     buttonSetColor(sat, buttonSat, textViewSat);
                 }
                 break;
+
             case R.id.button_sun:
                 if (!sun) {
                     sun = true;
@@ -202,6 +213,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                     buttonSetColor(sun, buttonSun, textViewSun);
                 }
                 break;
+
             default:
                 break;
         }
@@ -227,6 +239,47 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
             button.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.button_select));
             textView.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void saveData() {
+        //포지션값
+        int pos = 0;
+        if (datas.size() > 0) {
+            pos = datas.get(datas.size() - 1).getPosition() + 1;
+        }
+        Intent data = new Intent(getApplicationContext(), MainActivity.class);
+        data.putExtra("position", position);
+        aHourday = timePicker.getHour();
+        aMinute = timePicker.getMinute();
+        String time = String.format("%d : %d", aHourday, aMinute);
+        alarm.setMon(sMon);
+        alarm.setTue(sTue);
+        alarm.setWed(sWed);
+        alarm.setThu(sThu);
+        alarm.setFri(sFri);
+        alarm.setSat(sSat);
+        alarm.setSun(sSun);
+        alarm.setTime(time);
+        alarm.setPosition(pos);
+
+        CRUDAlarm.addAlarm(alarm);
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    }
+
+    public void modifyData() {
+        aHourday = timePicker.getHour();
+        aMinute = timePicker.getMinute();
+        String time = String.format("%d : %d", aHourday, aMinute);
+        alarm.setMon(sMon);
+        alarm.setTue(sTue);
+        alarm.setWed(sWed);
+        alarm.setThu(sThu);
+        alarm.setFri(sFri);
+        alarm.setSat(sSat);
+        alarm.setSun(sSun);
+        alarm.setTime(time);
+        CRUDAlarm.updateInfo(itemPostion, time, sMon, sTue, sWed, sThu, sFri, sSat, sSun);
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
     }
 
 }
