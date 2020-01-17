@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import org.w3c.dom.Text;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -35,11 +37,11 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     Button buttonMon, buttonTue, buttonWed, buttonThu, buttonFri, buttonSat, buttonSun;
     TextView textViewMon, textViewTue, textViewWed, textViewThu, textViewFri, textViewSat, textViewSun;
     Alarm alarm;
-    int itemPostion;
-    int position;
     Realm realm;
     List<Alarm> datas;
-
+    boolean day;
+    long position;
+    long makeTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +76,6 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         textViewSat = findViewById(R.id.textview_sat);
         textViewSun = findViewById(R.id.textview_sun);
         intent = getIntent();
-        alarm = new Alarm();
         realm = Realm.getDefaultInstance();
         datas = CRUDAlarm.readAllAlarm();
     }
@@ -98,13 +99,20 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         timePicker.setIs24HourView(true);
         timePicker.setCurrentHour(Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
         activity = intent.getBooleanExtra("activity", true);
-        itemPostion = intent.getIntExtra("position", 100);
+        makeTime = intent.getLongExtra("makeTime", System.currentTimeMillis());
+        day = intent.getBooleanExtra("day", false);
+        alarm = realm.where(Alarm.class).equalTo("makeTime", makeTime).findFirst();
+        if (alarm == null) {
+            alarm = new Alarm();
+        }
     }
 
     @Override
     public void initProcess() {
         buttonSetText(activity);
-
+        if (day) {
+            buttonSetText(activity);
+        }
     }
 
     @Override
@@ -113,27 +121,23 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
             case R.id.button_save:
                 if (!activity) {
                     modifyData();
+                    setData();
                 } else {
                     saveData();
+
                 }
                 break;
 
             case R.id.button_cancel:
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
                 break;
 
             case R.id.button_delete:
-                LogUtil.e(TAG, "position :::: " + itemPostion);
+                LogUtil.e(TAG, "getMakeTime :::: " + alarm.getMakeTime());
 
-                CRUDAlarm.deleteAlarm(itemPostion);
-                if (datas.size() > itemPostion) {
-                    itemPostion++;
-                    for (int i = itemPostion; itemPostion <= datas.size(); i++) {
-                        RealmResults<Alarm> alarm = realm.where(Alarm.class).findAll();
-                        CRUDAlarm.updateId(itemPostion);
-                    }
-                }
+                CRUDAlarm.deleteAlarm(alarm.getMakeTime());
 
+                finishAffinity();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 break;
 
@@ -226,7 +230,18 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         } else {
             buttonSave.setText(R.string.modify);
             buttonDelete.setVisibility(View.VISIBLE);
+        }
+    }
 
+    public void buttonDasy(boolean activity, boolean days, Button button, TextView textView) {
+        if (!activity) {
+            if (days) {
+                button.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.button_select));
+                textView.setVisibility(View.VISIBLE);
+            } else {
+                button.setBackgroundDrawable(getApplicationContext().getResources().getDrawable(R.drawable.button_unselect));
+                textView.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -242,16 +257,10 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     }
 
     public void saveData() {
-        //포지션값
-        int pos = 0;
-        if (datas.size() > 0) {
-            pos = datas.get(datas.size() - 1).getPosition() + 1;
-        }
         Intent data = new Intent(getApplicationContext(), MainActivity.class);
-        data.putExtra("position", position);
         aHourday = timePicker.getHour();
         aMinute = timePicker.getMinute();
-        String time = String.format("%d : %d", aHourday, aMinute);
+        String time = String.format("%02d : %02d", aHourday, aMinute);
         alarm.setMon(sMon);
         alarm.setTue(sTue);
         alarm.setWed(sWed);
@@ -260,9 +269,10 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         alarm.setSat(sSat);
         alarm.setSun(sSun);
         alarm.setTime(time);
-        alarm.setPosition(pos);
+        alarm.setMakeTime(System.currentTimeMillis());
 
         CRUDAlarm.addAlarm(alarm);
+        finishAffinity();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
     }
 
@@ -270,16 +280,59 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         aHourday = timePicker.getHour();
         aMinute = timePicker.getMinute();
         String time = String.format("%d : %d", aHourday, aMinute);
-        alarm.setMon(sMon);
-        alarm.setTue(sTue);
-        alarm.setWed(sWed);
-        alarm.setThu(sThu);
-        alarm.setFri(sFri);
-        alarm.setSat(sSat);
-        alarm.setSun(sSun);
+//        alarm.setMon(sMon);
+//        alarm.setTue(sTue);
+//        alarm.setWed(sWed);
+//        alarm.setThu(sThu);
+//        alarm.setFri(sFri);
+//        alarm.setSat(sSat);
+//        alarm.setSun(sSun);
         alarm.setTime(time);
-        CRUDAlarm.updateInfo(itemPostion, time, sMon, sTue, sWed, sThu, sFri, sSat, sSun);
+        CRUDAlarm.updateInfo(time, sMon, sTue, sWed, sThu, sFri, sSat, sSun, makeTime);
+
+        finishAffinity();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
+    }
+
+    public void setData() {
+        int hour = 0, minute = 0;
+        Realm realm = Realm.getDefaultInstance();
+
+        CRUDAlarm.readData(makeTime).getTime();
+        CRUDAlarm.readData(makeTime).getMon();
+        CRUDAlarm.readData(makeTime).getTue();
+        CRUDAlarm.readData(makeTime).getWed();
+        CRUDAlarm.readData(makeTime).getThu();
+        CRUDAlarm.readData(makeTime).getFri();
+        CRUDAlarm.readData(makeTime).getSat();
+        CRUDAlarm.readData(makeTime).getSun();
+
+        getDays( CRUDAlarm.readData(makeTime).getMon(), textViewMon);
+        getDays( CRUDAlarm.readData(makeTime).getTue(), textViewTue);
+        getDays( CRUDAlarm.readData(makeTime).getWed(), textViewWed);
+        getDays( CRUDAlarm.readData(makeTime).getThu(), textViewThu);
+        getDays( CRUDAlarm.readData(makeTime).getFri(), textViewFri);
+        getDays( CRUDAlarm.readData(makeTime).getSat(), textViewSat);
+        getDays( CRUDAlarm.readData(makeTime).getSun(), textViewSun);
+
+        getTime(CRUDAlarm.readData(makeTime).getTime(), hour, minute);
+        timePicker.setHour(hour);
+        timePicker.setMinute(minute);
+
+    }
+
+    public void getDays(String days, TextView textView) {
+        if (!days.equals("")) {
+            textView.setText(days);
+        } else {
+            textView.setText("");
+        }
+    }
+
+
+    public void getTime(String time, int hour, int minute) {
+        hour = Integer.parseInt(time.substring(0, 1));
+        minute = Integer.parseInt(time.substring(5, 6));
     }
 
 }

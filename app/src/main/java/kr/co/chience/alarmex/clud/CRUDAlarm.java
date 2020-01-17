@@ -1,7 +1,5 @@
 package kr.co.chience.alarmex.clud;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +27,7 @@ public class CRUDAlarm {
                 realmAlarm.setFri(alarm.getFri());
                 realmAlarm.setSat(alarm.getSat());
                 realmAlarm.setSun(alarm.getSun());
-                realmAlarm.setPosition(alarm.getPosition());
+                realmAlarm.setMakeTime(alarm.getMakeTime());
 
                 LogUtil.e(TAG, "time :::: " + alarm.getTime());
                 LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
@@ -39,7 +37,7 @@ public class CRUDAlarm {
                 LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
                 LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
                 LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
-                LogUtil.e(TAG, "Position :::: " + alarm.getPosition());
+                LogUtil.e(TAG, "MakeTime :::: " + alarm.getMakeTime());
                 LogUtil.e(TAG, "===============================================================");
 
             }
@@ -57,27 +55,16 @@ public class CRUDAlarm {
         return alarms;
     }
 
-    public final static void updateId(int position) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        Alarm alarm = realm.where(Alarm.class).equalTo("position", position).findFirst();
-
-        alarm.setPosition(position - 1);
-
-        realm.insertOrUpdate(alarm);
-        realm.commitTransaction();
-
-    }
-
-    public final static void updateInfo(int position, String time,
+    public final static void updateInfo(String time,
                                         String mon, String tue,
                                         String wed, String thu,
                                         String fri, String sat,
-                                        String sun) {
+                                        String sun,
+                                        long makeTime) {
 
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();;
-        Alarm alarm = realm.where(Alarm.class).equalTo("position", position).findFirst();
+        realm.beginTransaction();
+        Alarm alarm = realm.where(Alarm.class).equalTo("makeTime", makeTime).findFirst();
 
         alarm.setTime(time);
         alarm.setMon(mon);
@@ -100,7 +87,7 @@ public class CRUDAlarm {
         LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
         LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
         LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
-        LogUtil.e(TAG, "Position :::: " + alarm.getPosition());
+        LogUtil.e(TAG, "Position :::: " + alarm.getMakeTime());
         LogUtil.e(TAG, "===============================================================");
 
 
@@ -129,12 +116,32 @@ public class CRUDAlarm {
         }
     }
 
-    public final static void deleteAlarm(int position) {
+    public final static void deleteAlarm(long makeTime) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        Alarm alarm = realm.where(Alarm.class).equalTo("position", position).findFirst();
+        Alarm alarm = realm.where(Alarm.class).equalTo("makeTime", makeTime).findFirst();
         alarm.deleteFromRealm();
         realm.commitTransaction();
     }
+
+    public final static Alarm readData(long makeTime) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Alarm alarm = realm.where(Alarm.class).equalTo("makeTime", makeTime).findFirst();
+
+        LogUtil.e(TAG, "============================불러오기===============================");
+        LogUtil.e(TAG, "time :::: " + alarm.getTime());
+        LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
+        LogUtil.e(TAG, "Tue :::: " + alarm.getTue());
+        LogUtil.e(TAG, "Wed :::: " + alarm.getWed());
+        LogUtil.e(TAG, "Thu :::: " + alarm.getThu());
+        LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
+        LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
+        LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
+        LogUtil.e(TAG, "Position :::: " + alarm.getMakeTime());
+        LogUtil.e(TAG, "===============================================================");
+        return alarm;
+    }
 }
+
 
