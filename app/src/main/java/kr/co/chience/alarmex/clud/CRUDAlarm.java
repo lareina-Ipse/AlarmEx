@@ -78,17 +78,17 @@ public class CRUDAlarm {
         realm.insertOrUpdate(alarm);
         realm.commitTransaction();
 
-        LogUtil.e(TAG, "============================수정===============================");
-        LogUtil.e(TAG, "time :::: " + alarm.getTime());
-        LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
-        LogUtil.e(TAG, "Tue :::: " + alarm.getTue());
-        LogUtil.e(TAG, "Wed :::: " + alarm.getWed());
-        LogUtil.e(TAG, "Thu :::: " + alarm.getThu());
-        LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
-        LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
-        LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
-        LogUtil.e(TAG, "Position :::: " + alarm.getMakeTime());
-        LogUtil.e(TAG, "===============================================================");
+//        LogUtil.e(TAG, "============================수정===============================");
+//        LogUtil.e(TAG, "time :::: " + alarm.getTime());
+//        LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
+//        LogUtil.e(TAG, "Tue :::: " + alarm.getTue());
+//        LogUtil.e(TAG, "Wed :::: " + alarm.getWed());
+//        LogUtil.e(TAG, "Thu :::: " + alarm.getThu());
+//        LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
+//        LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
+//        LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
+//        LogUtil.e(TAG, "Position :::: " + alarm.getMakeTime());
+//        LogUtil.e(TAG, "===============================================================");
 
 
     }
@@ -126,7 +126,6 @@ public class CRUDAlarm {
 
     public final static Alarm readData(long makeTime) {
         Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
         Alarm alarm = realm.where(Alarm.class).equalTo("makeTime", makeTime).findFirst();
 
         LogUtil.e(TAG, "============================불러오기===============================");
@@ -140,6 +139,7 @@ public class CRUDAlarm {
         LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
         LogUtil.e(TAG, "Position :::: " + alarm.getMakeTime());
         LogUtil.e(TAG, "===============================================================");
+
         return alarm;
     }
 }

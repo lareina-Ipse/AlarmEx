@@ -7,13 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 
 import kr.co.chience.alarmex.AddActivity;
 import kr.co.chience.alarmex.R;
-import kr.co.chience.alarmex.Util.LogUtil;
+import kr.co.chience.alarmex.clud.CRUDAlarm;
 import kr.co.chience.alarmex.model.Alarm;
 
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHoler> {
@@ -54,15 +56,18 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String getMon, getTue, getWed, getThu, getFri, getSat, getSun, getTime;
+                long makeTime;
 
-                LogUtil.e(TAG, items.get(position).getTime());
-                LogUtil.e(TAG, "position :::: " + position);
+                makeTime = items.get(position).getMakeTime();
+
                 Intent intent = new Intent(context, AddActivity.class);
+
                 String time = items.get(position).getTime();
-                intent.putExtra("time", time);
-                intent.putExtra("makeTime", items.get(position).getMakeTime());
+                intent.putExtra("makeTime", makeTime);
                 intent.putExtra("activity", false);
+
+                getData(makeTime, intent);
+
                 context.startActivity(intent);
 
             }
@@ -99,8 +104,46 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         }
     }
 
+    public boolean days(String days) {
+        if (days == null) {
+            return false;
+        } else {
+           return true;
+        }
+    }
+
+    public void getData(long makeTime, Intent intent) {
+
+        Boolean mon, tue = false, wed = false, thu = false, fri = false, sat = false, sun = false;
+        String sMon, sTue, sWed, sThu, sFri, sSat, sSun, time;
+
+        sMon = CRUDAlarm.readData(makeTime).getMon();
+        sTue = CRUDAlarm.readData(makeTime).getTue();
+        sWed = CRUDAlarm.readData(makeTime).getWed();
+        sThu = CRUDAlarm.readData(makeTime).getThu();
+        sFri = CRUDAlarm.readData(makeTime).getFri();
+        sSat = CRUDAlarm.readData(makeTime).getSat();
+        sSun = CRUDAlarm.readData(makeTime).getSun();
+        time = CRUDAlarm.readData(makeTime).getTime();
+
+        mon = days(sMon);
+        tue = days(sTue);
+        wed = days(sWed);
+        thu = days(sThu);
+        fri = days(sFri);
+        sat = days(sSat);
+        sun = days(sSun);
+
+        intent.putExtra("mon", mon);
+        intent.putExtra("tue", tue);
+        intent.putExtra("wed", wed);
+        intent.putExtra("thu", thu);
+        intent.putExtra("fri", fri);
+        intent.putExtra("sat", sat);
+        intent.putExtra("sun", sun);
+        intent.putExtra("time", time);
 
 
-
+    }
 }
 

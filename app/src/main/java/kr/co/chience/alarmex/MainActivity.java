@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         initListener();
         initItems();
         initProcess();
-
     }
 
     @Override
@@ -67,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         textViewFri = findViewById(R.id.textview_fri);
         textViewSat = findViewById(R.id.textview_sat);
         textViewSun = findViewById(R.id.textview_sun);
-
     }
 
     @Override
@@ -87,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         mAdapter.notifyDataSetChanged();
 
     }
-
 
     @Override
     public void onClick(View v) {
@@ -115,5 +112,4 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         realm.removeAllChangeListeners();
         realm.close();
     }
-
 }

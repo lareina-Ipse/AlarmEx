@@ -113,6 +113,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         if (day) {
             buttonSetText(activity);
         }
+        setData();
     }
 
     @Override
@@ -121,7 +122,6 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
             case R.id.button_save:
                 if (!activity) {
                     modifyData();
-                    setData();
                 } else {
                     saveData();
 
@@ -129,14 +129,15 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                 break;
 
             case R.id.button_cancel:
+
                 finish();
+
                 break;
 
             case R.id.button_delete:
                 LogUtil.e(TAG, "getMakeTime :::: " + alarm.getMakeTime());
 
                 CRUDAlarm.deleteAlarm(alarm.getMakeTime());
-
                 finishAffinity();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 break;
@@ -279,15 +280,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     public void modifyData() {
         aHourday = timePicker.getHour();
         aMinute = timePicker.getMinute();
-        String time = String.format("%d : %d", aHourday, aMinute);
-//        alarm.setMon(sMon);
-//        alarm.setTue(sTue);
-//        alarm.setWed(sWed);
-//        alarm.setThu(sThu);
-//        alarm.setFri(sFri);
-//        alarm.setSat(sSat);
-//        alarm.setSun(sSun);
-        alarm.setTime(time);
+        String time = String.format("%02d : %02d", aHourday, aMinute);
         CRUDAlarm.updateInfo(time, sMon, sTue, sWed, sThu, sFri, sSat, sSun, makeTime);
 
         finishAffinity();
@@ -295,45 +288,34 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     }
 
     public void setData() {
-        int hour = 0, minute = 0;
-        Realm realm = Realm.getDefaultInstance();
+        int hour, minute;
+        String time;
 
-        CRUDAlarm.readData(makeTime).getTime();
-        CRUDAlarm.readData(makeTime).getMon();
-        CRUDAlarm.readData(makeTime).getTue();
-        CRUDAlarm.readData(makeTime).getWed();
-        CRUDAlarm.readData(makeTime).getThu();
-        CRUDAlarm.readData(makeTime).getFri();
-        CRUDAlarm.readData(makeTime).getSat();
-        CRUDAlarm.readData(makeTime).getSun();
+        mon = (intent.getBooleanExtra("mon", false));
+        tue = (intent.getBooleanExtra("tue", false));
+        wed = (intent.getBooleanExtra("wed", false));
+        thu = (intent.getBooleanExtra("thu", false));
+        fri = (intent.getBooleanExtra("fri", false));
+        sat = (intent.getBooleanExtra("sat", false));
+        sun = (intent.getBooleanExtra("sun", false));
+        time = (intent.getStringExtra("time"));
 
-        getDays( CRUDAlarm.readData(makeTime).getMon(), textViewMon);
-        getDays( CRUDAlarm.readData(makeTime).getTue(), textViewTue);
-        getDays( CRUDAlarm.readData(makeTime).getWed(), textViewWed);
-        getDays( CRUDAlarm.readData(makeTime).getThu(), textViewThu);
-        getDays( CRUDAlarm.readData(makeTime).getFri(), textViewFri);
-        getDays( CRUDAlarm.readData(makeTime).getSat(), textViewSat);
-        getDays( CRUDAlarm.readData(makeTime).getSun(), textViewSun);
+        hour = Integer.parseInt(time.substring(0, 2));
+        minute = Integer.parseInt(time.substring(5, 7));
 
-        getTime(CRUDAlarm.readData(makeTime).getTime(), hour, minute);
+        buttonSetColor(mon, buttonMon, textViewMon);
+        buttonSetColor(tue, buttonTue, textViewTue);
+        buttonSetColor(wed, buttonWed, textViewWed);
+        buttonSetColor(thu, buttonThu, textViewThu);
+        buttonSetColor(fri, buttonFri, textViewFri);
+        buttonSetColor(sat, buttonSat, textViewSat);
+        buttonSetColor(sun, buttonSun, textViewSun);
+
         timePicker.setHour(hour);
         timePicker.setMinute(minute);
 
     }
 
-    public void getDays(String days, TextView textView) {
-        if (!days.equals("")) {
-            textView.setText(days);
-        } else {
-            textView.setText("");
-        }
-    }
-
-
-    public void getTime(String time, int hour, int minute) {
-        hour = Integer.parseInt(time.substring(0, 1));
-        minute = Integer.parseInt(time.substring(5, 6));
-    }
 
 }
 
