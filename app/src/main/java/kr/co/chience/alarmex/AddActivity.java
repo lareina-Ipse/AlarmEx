@@ -11,13 +11,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import org.w3c.dom.Text;
-
 import java.util.Calendar;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 import kr.co.chience.alarmex.Util.LogUtil;
 import kr.co.chience.alarmex.base.BaseInterface;
 import kr.co.chience.alarmex.clud.CRUDAlarm;
@@ -345,12 +342,14 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         intent.putExtra("state", "on");
 
         pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()-2, pendingIntent);
-
+      //  alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()-2, pendingIntent);
         //반복설정 (우선 부정확하다)
-        alarmManager.setRepeating(AlarmManager.RTC, bTime, interval-2, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, bTime, interval-2, pendingIntent);
     }
 
+    private void stop() {
+
+    }
 
 }
 

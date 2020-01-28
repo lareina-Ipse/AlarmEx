@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         reFresh();
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
-
     }
 
     @Override

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kr.co.chience.alarmex">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -13,7 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AddActivity"></activity>
+        <activity android:name=".ServiceActivity"></activity>
+        <activity android:name=".AlarmActivity" />
+        <activity android:name=".AddActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,11 +28,10 @@
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"/>
 
-        <service
-            android:name=".service.AlarmService"
-            android:enabled="true" />
+        <service android:name=".service.AlarmService"
+            android:enabled="true"/>
 
     </application>
 
