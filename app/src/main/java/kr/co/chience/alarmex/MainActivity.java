@@ -4,12 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -22,7 +22,6 @@ import kr.co.chience.alarmex.model.Alarm;
 public class MainActivity extends AppCompatActivity implements BaseInterface, View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
     RecyclerView mRecyclerView;
     RecyclerView.LayoutManager mLayoutManager;
     ArrayList<Alarm> arrayList;
@@ -35,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
     Realm realm;
     RealmChangeListener realmChangeListener;
     CRUDAlarm.ItemAlarm itemAlarm;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         textViewFri = findViewById(R.id.textview_fri);
         textViewSat = findViewById(R.id.textview_sat);
         textViewSun = findViewById(R.id.textview_sun);
+
     }
 
     @Override
@@ -112,4 +113,6 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         realm.removeAllChangeListeners();
         realm.close();
     }
+
+
 }

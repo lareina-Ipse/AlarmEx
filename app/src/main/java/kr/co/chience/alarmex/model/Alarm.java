@@ -14,12 +14,15 @@ public class Alarm extends RealmObject {
     String sat;
     String sun;
     long makeTime;
+    int aSwitch;
+
+
 
     public Alarm() {
 
     }
 
-    public Alarm(String time, String mon, String tue, String wed, String thu, String fri, String sat, String sun, long makeTime) {
+    public Alarm(String time, String mon, String tue, String wed, String thu, String fri, String sat, String sun, long makeTime, int aSwitch) {
         this.time = time;
         this.mon = mon;
         this.tue = tue;
@@ -29,6 +32,7 @@ public class Alarm extends RealmObject {
         this.sat = sat;
         this.sun = sun;
         this.makeTime = makeTime;
+        this.aSwitch = aSwitch;
     }
 
     public String getTime() {
@@ -101,5 +105,13 @@ public class Alarm extends RealmObject {
 
     public void setMakeTime(long makeTime) {
         this.makeTime = makeTime;
+    }
+
+    public int getaSwitch() {
+        return aSwitch;
+    }
+
+    public void setaSwitch(int aSwitch) {
+        this.aSwitch = aSwitch;
     }
 }

@@ -25,6 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="06:55"
+                android:textColor="#000"
                 android:textSize="25sp"
                 android:textStyle="bold" />
 
@@ -37,6 +38,7 @@
                     android:id="@+id/textview_mon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#000"
                     android:layout_marginRight="5dp"
                     android:visibility="visible" />
 
@@ -44,6 +46,7 @@
                     android:id="@+id/textview_tue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#000"
                     android:layout_marginRight="5dp"
                     android:visibility="visible" />
 
@@ -51,6 +54,7 @@
                     android:id="@+id/textview_wed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#000"
                     android:layout_marginRight="5dp"
                     android:visibility="visible" />
 
@@ -58,6 +62,7 @@
                     android:id="@+id/textview_thu"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#000"
                     android:layout_marginRight="5dp"
                     android:visibility="visible" />
 
@@ -65,6 +70,7 @@
                     android:id="@+id/textview_fri"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#000"
                     android:layout_marginRight="5dp"
                     android:visibility="visible" />
 
@@ -72,6 +78,7 @@
                     android:id="@+id/textview_sat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#000"
                     android:layout_marginRight="5dp"
                     android:visibility="visible" />
 
@@ -79,6 +86,7 @@
                     android:id="@+id/textview_sun"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="#000"
                     android:visibility="visible" />
 
             </LinearLayout>

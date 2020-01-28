@@ -1,10 +1,12 @@
 package kr.co.chience.alarmex.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -40,8 +42,9 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         return (AlarmViewHoler) viewHolder;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
-    public void onBindViewHolder(@NonNull AlarmViewHoler holder, final int position) {
+    public void onBindViewHolder(@NonNull final AlarmViewHoler holder, final int position) {
 
         final Alarm item = items.get(position);
         holder.time.setText(items.get(position).getTime());
@@ -69,10 +72,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
                 getData(makeTime, intent);
 
                 context.startActivity(intent);
-
             }
         });
-
     }
 
     @Override
@@ -82,8 +83,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
     public class AlarmViewHoler extends RecyclerView.ViewHolder {
 
-        TextView time;
         TextView days;
+        TextView time;
         TextView mon, tue, wed, thu, fri, sat, sun;
         Switch aSwitch;
 
@@ -143,7 +144,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         intent.putExtra("sun", sun);
         intent.putExtra("time", time);
 
-
     }
+
+
 }
 

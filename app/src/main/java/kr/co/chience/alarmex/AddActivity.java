@@ -2,6 +2,8 @@ package kr.co.chience.alarmex;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -20,13 +22,14 @@ import kr.co.chience.alarmex.Util.LogUtil;
 import kr.co.chience.alarmex.base.BaseInterface;
 import kr.co.chience.alarmex.clud.CRUDAlarm;
 import kr.co.chience.alarmex.model.Alarm;
+import kr.co.chience.alarmex.receiver.AlarmReceiver;
 
 public class AddActivity extends AppCompatActivity implements BaseInterface, View.OnClickListener {
 
     private static final String TAG = AddActivity.class.getSimpleName();
 
     TimePicker timePicker;
-    int aHourday, aMinute;
+    int aHourday, aMinute, aSwitch;
     boolean activity = true;
     Intent intent;
     Button buttonSave;
@@ -42,6 +45,9 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     boolean day;
     long position;
     long makeTime;
+
+    AlarmManager alarmManager;
+    PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +84,8 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         intent = getIntent();
         realm = Realm.getDefaultInstance();
         datas = CRUDAlarm.readAllAlarm();
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
     }
 
     @Override
@@ -113,7 +121,11 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         if (day) {
             buttonSetText(activity);
         }
-        setData();
+
+        if (!activity) {
+            setData();
+        }
+
     }
 
     @Override
@@ -124,19 +136,16 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
                     modifyData();
                 } else {
                     saveData();
-
+                    start();
                 }
                 break;
 
             case R.id.button_cancel:
-
                 finish();
-
                 break;
 
             case R.id.button_delete:
                 LogUtil.e(TAG, "getMakeTime :::: " + alarm.getMakeTime());
-
                 CRUDAlarm.deleteAlarm(alarm.getMakeTime());
                 finishAffinity();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -270,6 +279,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         alarm.setSat(sSat);
         alarm.setSun(sSun);
         alarm.setTime(time);
+        alarm.setaSwitch(aSwitch);
         alarm.setMakeTime(System.currentTimeMillis());
 
         CRUDAlarm.addAlarm(alarm);
@@ -281,7 +291,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         aHourday = timePicker.getHour();
         aMinute = timePicker.getMinute();
         String time = String.format("%02d : %02d", aHourday, aMinute);
-        CRUDAlarm.updateInfo(time, sMon, sTue, sWed, sThu, sFri, sSat, sSun, makeTime);
+        CRUDAlarm.updateInfo(time, sMon, sTue, sWed, sThu, sFri, sSat, sSun, makeTime, aSwitch);
 
         finishAffinity();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -311,9 +321,34 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         buttonSetColor(sat, buttonSat, textViewSat);
         buttonSetColor(sun, buttonSun, textViewSun);
 
-        timePicker.setHour(hour);
-        timePicker.setMinute(minute);
+            timePicker.setHour(hour);
+            timePicker.setMinute(minute);
 
+    }
+
+    private void start() {
+
+        long interval = 1000 * 60 * 60 * 24;
+        long bTime;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, aHourday);
+        calendar.set(Calendar.MINUTE, aMinute);
+        calendar.set(Calendar.SECOND, 0);
+        bTime = calendar.getTimeInMillis();
+
+        if (calendar.before(Calendar.getInstance())) {
+            calendar.add(Calendar.DATE, 1);
+        }
+
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        intent.putExtra("state", "on");
+
+        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis()-2, pendingIntent);
+
+        //반복설정 (우선 부정확하다)
+        alarmManager.setRepeating(AlarmManager.RTC, bTime, interval-2, pendingIntent);
     }
 
 
