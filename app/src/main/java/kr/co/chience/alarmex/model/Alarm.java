@@ -1,11 +1,11 @@
 package kr.co.chience.alarmex.model;
 
 import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 public class Alarm extends RealmObject {
 
-    String time;
+    String hour;
+    String minute;
     String mon;
     String tue;
     String wed;
@@ -16,14 +16,17 @@ public class Alarm extends RealmObject {
     long makeTime;
     int aSwitch;
 
-
-
     public Alarm() {
 
     }
 
-    public Alarm(String time, String mon, String tue, String wed, String thu, String fri, String sat, String sun, long makeTime, int aSwitch) {
-        this.time = time;
+    public Alarm(String hour, String minute,
+                 String mon, String tue, String wed,
+                 String thu, String fri, String sat,
+                 String sun, long makeTime, int aSwitch) {
+
+        this.hour = hour;
+        this.minute = minute;
         this.mon = mon;
         this.tue = tue;
         this.wed = wed;
@@ -33,14 +36,23 @@ public class Alarm extends RealmObject {
         this.sun = sun;
         this.makeTime = makeTime;
         this.aSwitch = aSwitch;
+
     }
 
-    public String getTime() {
-        return time;
+    public String getHour() {
+        return hour;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setHour(String hour) {
+        this.hour = hour;
+    }
+
+    public String getMinute() {
+        return minute;
+    }
+
+    public void setMinute(String minute) {
+        this.minute = minute;
     }
 
     public String getMon() {

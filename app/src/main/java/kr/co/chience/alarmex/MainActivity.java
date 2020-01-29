@@ -5,19 +5,29 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import kr.co.chience.alarmex.Util.LogUtil;
 import kr.co.chience.alarmex.adapter.AlarmAdapter;
 import kr.co.chience.alarmex.base.BaseInterface;
 import kr.co.chience.alarmex.clud.CRUDAlarm;
 import kr.co.chience.alarmex.model.Alarm;
+import kr.co.chience.alarmex.receiver.AlarmReceiver;
 
 public class MainActivity extends AppCompatActivity implements BaseInterface, View.OnClickListener {
 
@@ -84,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         reFresh();
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
+        multiAlarm();
     }
 
     @Override
@@ -113,5 +124,60 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         realm.close();
     }
 
+    private void multiAlarm() {
+        List<Alarm> alarms;
+        alarms = CRUDAlarm.readAllAlarm();
+
+        Intent intent = null;
+        int hour = 0;
+        int minute = 0;
+        long alarmTime = 0;
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        long interval = 1000 * 60 * 60 * 24;
+
+        LogUtil.e(TAG, "Alarms Size ::::: " + alarms.size());
+
+        if (alarms.size() != 0) {
+            for (int i = 0; i < alarms.size(); i++) {
+                LogUtil.e(TAG, "Alarms Get  :::::" + alarms.get(i));
+
+                hour = Integer.parseInt(alarms.get(i).getHour());
+                minute = Integer.parseInt(alarms.get(i).getMinute());
+
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
+                calendar.set(Calendar.SECOND, 0);
+                alarmTime = calendar.getTimeInMillis();
+
+                LogUtil.e(TAG, "Hour   :: " + hour);
+                LogUtil.e(TAG, "Minute :: " + minute);
+
+                //알람요청시간이 현재시간을 지났을때
+                if (calendar.before(Calendar.getInstance())) {
+                    calendar.add(Calendar.DATE, 1);
+                }
+
+                //알람요청시간 반복
+                if (calendar.get(Calendar.HOUR_OF_DAY) >= hour) {
+                    calendar.add(Calendar.DATE, 1);
+                }
+
+                intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                intent.putExtra("state", "on");
+
+                PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                if (Build.VERSION.SDK_INT >= 19) {
+                    am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, calendar.getTimeInMillis(), sender);
+                } else {
+                    am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, calendar.getTimeInMillis(), sender);
+                }
+
+            }
+
+        }
+    }
 
 }

@@ -11,13 +11,11 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.util.Log;
 import android.widget.RemoteViews;
-
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-
 import kr.co.chience.alarmex.AlarmActivity;
-import kr.co.chience.alarmex.MainActivity;
 import kr.co.chience.alarmex.R;
 import kr.co.chience.alarmex.Util.LogUtil;
 
@@ -39,6 +37,11 @@ public class AlarmService extends Service {
         state = intent.getStringExtra("state");
 
         if (state.equals("on")) {
+
+            int size = intent.getIntExtra("size", 0);
+
+            LogUtil.e(TAG, "Get Size ::" + size);
+
             vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
             vibrator.vibrate(pattern, 0);
             LogUtil.e(TAG, "AlarmService Start");
@@ -107,6 +110,7 @@ public class AlarmService extends Service {
 
         startForeground(0x12345, builder.build());
     }
+
 
 
 }

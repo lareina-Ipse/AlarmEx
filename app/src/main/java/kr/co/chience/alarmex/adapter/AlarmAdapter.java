@@ -47,7 +47,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     public void onBindViewHolder(@NonNull final AlarmViewHoler holder, final int position) {
 
         final Alarm item = items.get(position);
-        holder.time.setText(items.get(position).getTime());
+        holder.hour.setText(items.get(position).getHour());
+        holder.minute.setText(items.get(position).getMinute());
         holder.mon.setText(items.get(position).getMon());
         holder.tue.setText(items.get(position).getTue());
         holder.wed.setText(items.get(position).getWed());
@@ -62,15 +63,12 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
                 long makeTime;
 
                 makeTime = items.get(position).getMakeTime();
-
                 Intent intent = new Intent(context, AddActivity.class);
 
-                String time = items.get(position).getTime();
                 intent.putExtra("makeTime", makeTime);
                 intent.putExtra("activity", false);
 
                 getData(makeTime, intent);
-
                 context.startActivity(intent);
             }
         });
@@ -84,14 +82,15 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     public class AlarmViewHoler extends RecyclerView.ViewHolder {
 
         TextView days;
-        TextView time;
+        TextView hour, minute;
         TextView mon, tue, wed, thu, fri, sat, sun;
         Switch aSwitch;
 
         public AlarmViewHoler(@NonNull View itemView) {
             super(itemView);
 
-            time = itemView.findViewById(R.id.textview_time);
+            hour = itemView.findViewById(R.id.textview_hour);
+            minute = itemView.findViewById(R.id.textview_minute);
             days = itemView.findViewById(R.id.textview_days);
             mon = itemView.findViewById(R.id.textview_mon);
             tue = itemView.findViewById(R.id.textview_tue);
@@ -101,7 +100,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             sat = itemView.findViewById(R.id.textview_sat);
             sun = itemView.findViewById(R.id.textview_sun);
             aSwitch = itemView.findViewById(R.id.switch_onoff);
-
         }
     }
 
@@ -116,7 +114,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     public void getData(long makeTime, Intent intent) {
 
         Boolean mon, tue = false, wed = false, thu = false, fri = false, sat = false, sun = false;
-        String sMon, sTue, sWed, sThu, sFri, sSat, sSun, time;
+        String sMon, sTue, sWed, sThu, sFri, sSat, sSun, hour, minute;
 
         sMon = CRUDAlarm.readData(makeTime).getMon();
         sTue = CRUDAlarm.readData(makeTime).getTue();
@@ -125,7 +123,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         sFri = CRUDAlarm.readData(makeTime).getFri();
         sSat = CRUDAlarm.readData(makeTime).getSat();
         sSun = CRUDAlarm.readData(makeTime).getSun();
-        time = CRUDAlarm.readData(makeTime).getTime();
+        hour = CRUDAlarm.readData(makeTime).getHour();
+        minute = CRUDAlarm.readData(makeTime).getMinute();
 
         mon = days(sMon);
         tue = days(sTue);
@@ -142,7 +141,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         intent.putExtra("fri", fri);
         intent.putExtra("sat", sat);
         intent.putExtra("sun", sun);
-        intent.putExtra("time", time);
+        intent.putExtra("hour", hour);
+        intent.putExtra("minute", minute);
 
     }
 
