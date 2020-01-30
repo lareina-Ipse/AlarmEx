@@ -1,5 +1,6 @@
 package kr.co.chience.alarmex.service;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,11 +14,21 @@ import android.os.IBinder;
 import android.os.Vibrator;
 import android.util.Log;
 import android.widget.RemoteViews;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import kr.co.chience.alarmex.AlarmActivity;
+import kr.co.chience.alarmex.MainActivity;
 import kr.co.chience.alarmex.R;
 import kr.co.chience.alarmex.Util.LogUtil;
+import kr.co.chience.alarmex.clud.CRUDAlarm;
+import kr.co.chience.alarmex.model.Alarm;
+import kr.co.chience.alarmex.receiver.AlarmReceiver;
 
 public class AlarmService extends Service {
 
@@ -25,6 +36,7 @@ public class AlarmService extends Service {
     private Vibrator vibrator;
     String state;
     long[] pattern = {1000, 1000, 1000, 1000};
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -37,23 +49,14 @@ public class AlarmService extends Service {
         state = intent.getStringExtra("state");
 
         if (state.equals("on")) {
-
-            int size = intent.getIntExtra("size", 0);
-
-            LogUtil.e(TAG, "Get Size ::" + size);
-
-            vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(pattern, 0);
+            //     vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+            //     vibrator.vibrate(pattern, 0);
             LogUtil.e(TAG, "AlarmService Start");
             setForeground();
-        } else if (state.equals("off")) {
-            LogUtil.e(TAG, "AlarmService Stop");
-            vibrator.cancel();
-            stopService(new Intent(getApplicationContext(), AlarmService.class));
-
+            multiAlarm();
         }
 
-        return START_NOT_STICKY;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     private void setForeground() {
@@ -74,8 +77,8 @@ public class AlarmService extends Service {
             //channel Id: 앱마다 unique한 ID 생성해야 하며 길면 잘릴 수 있다
             //channel Name: 사용자에게 보여지는 채널의 이름
             //channel Importance: 채널이 중요도를 의미하며, 알람
-            channel = new NotificationChannel("Key_foreground", "Key_foreground", NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Key_foreground");                                        //소리알림
+            channel = new NotificationChannel("Alarm", getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("Alarm");                                        //소리알림
             channel.enableLights(true);
             channel.setLightColor(Color.RED);
             channel.enableVibration(false);
@@ -104,13 +107,65 @@ public class AlarmService extends Service {
         //알람 터치시 자동으로 삭제할 것인지 설정
         //
 
+ //       vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+   //     vibrator.vibrate(pattern, 0);
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId("Key_foreground");
+            builder.setChannelId("Alarm");
         }
 
         startForeground(0x12345, builder.build());
     }
 
+    private void multiAlarm() {
+        List<Alarm> alarms;
+        alarms = CRUDAlarm.readAllAlarm();
 
+        Intent intent = null;
+        int hour = 0;
+        int minute = 0;
+        long alarmTime = 0;
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        long interval = 1000 * 60 * 60 * 24;
+
+        LogUtil.e(TAG, "Alarms Size ::::: " + alarms.size());
+
+        if (alarms.size() != 0) {
+            for (int i = 0; i < alarms.size(); i++) {
+                LogUtil.e(TAG, "Alarms Get  :::::" + alarms.get(i));
+
+                hour = Integer.parseInt(alarms.get(i).getHour());
+                minute = Integer.parseInt(alarms.get(i).getMinute());
+
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
+                calendar.set(Calendar.SECOND, 0);
+                alarmTime = calendar.getTimeInMillis();
+
+                LogUtil.e(TAG, "Hour   :: " + hour);
+                LogUtil.e(TAG, "Minute :: " + minute);
+
+                //현 시간에서 지나간 시간이면 다음 날로 지정
+                if (calendar.before(Calendar.getInstance())) {
+                    calendar.add(Calendar.DATE, 1);
+                    int month, date;
+                    month = calendar.get(Calendar.MONTH) + 1;
+                    date = calendar.get(Calendar.DATE);
+                    LogUtil.e(TAG, "Calender ::: " + month + " / " + date);
+                }
+
+                intent = new Intent(getApplicationContext(), AlarmReceiver.class);
+                intent.putExtra("state", "on");
+
+                PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+            }
+
+        }
+
+    }
 
 }

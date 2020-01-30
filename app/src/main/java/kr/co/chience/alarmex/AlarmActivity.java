@@ -35,12 +35,7 @@ public class AlarmActivity extends AppCompatActivity {
     }
 
     private void stop() {
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        this.pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        this.alarmManager.cancel(this.pendingIntent);
-        intent.putExtra("state", "off");
-        sendBroadcast(intent);
-        this.pendingIntent = null;
+        stopService(new Intent(AlarmActivity.this, AlarmService.class));
         finish();
     }
 

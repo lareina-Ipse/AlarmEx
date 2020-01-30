@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,6 +27,7 @@ import kr.co.chience.alarmex.base.BaseInterface;
 import kr.co.chience.alarmex.clud.CRUDAlarm;
 import kr.co.chience.alarmex.model.Alarm;
 import kr.co.chience.alarmex.receiver.AlarmReceiver;
+import kr.co.chience.alarmex.service.AlarmService;
 
 public class MainActivity extends AppCompatActivity implements BaseInterface, View.OnClickListener {
 
@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
     Realm realm;
     RealmChangeListener realmChangeListener;
     CRUDAlarm.ItemAlarm itemAlarm;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         reFresh();
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
+
         multiAlarm();
     }
 
@@ -122,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
         super.onDestroy();
         realm.removeAllChangeListeners();
         realm.close();
+
     }
 
     private void multiAlarm() {
@@ -154,30 +155,26 @@ public class MainActivity extends AppCompatActivity implements BaseInterface, Vi
                 LogUtil.e(TAG, "Hour   :: " + hour);
                 LogUtil.e(TAG, "Minute :: " + minute);
 
-                //알람요청시간이 현재시간을 지났을때
+                //현 시간에서 지나간 시간이면 다음 날로 지정
                 if (calendar.before(Calendar.getInstance())) {
                     calendar.add(Calendar.DATE, 1);
-                }
-
-                //알람요청시간 반복
-                if (calendar.get(Calendar.HOUR_OF_DAY) >= hour) {
-                    calendar.add(Calendar.DATE, 1);
+                    int month, date;
+                    month = calendar.get(Calendar.MONTH) + 1 ;
+                    date = calendar.get(Calendar.DATE);
+                    LogUtil.e(TAG, "Calender ::: " + month + " / " + date );
                 }
 
                 intent = new Intent(getApplicationContext(), AlarmReceiver.class);
                 intent.putExtra("state", "on");
 
                 PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                if (Build.VERSION.SDK_INT >= 19) {
-                    am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, calendar.getTimeInMillis(), sender);
-                } else {
-                    am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, calendar.getTimeInMillis(), sender);
-                }
+                am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
 
             }
 
         }
-    }
 
+    }
 }
+
+
