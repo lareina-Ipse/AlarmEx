@@ -4,7 +4,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import io.realm.Realm;
 import io.realm.RealmResults;
 import kr.co.chience.alarmex.Util.LogUtil;
@@ -31,7 +30,16 @@ public class CRUDAlarm {
                 realmAlarm.setSat(alarm.getSat());
                 realmAlarm.setSun(alarm.getSun());
                 realmAlarm.setMakeTime(alarm.getMakeTime());
+                realmAlarm.setSwitchMaketime(alarm.getSwitchMaketime());
                 realmAlarm.setaSwitch(alarm.getaSwitch());
+
+                LogUtil.e(TAG, "==========================AddAlarm=============================");
+                LogUtil.e(TAG, "Hour     :::: " + alarm.getHour());
+                LogUtil.e(TAG, "Minute   :::: " + alarm.getMinute());
+                LogUtil.e(TAG, "Switch Postion   :::: " + alarm.getSwitchMaketime());
+                LogUtil.e(TAG, "switch   :::: " + alarm.getaSwitch());
+                LogUtil.e(TAG, "MakeTime :::: " + alarm.getMakeTime());
+                LogUtil.e(TAG, "===============================================================");
 
 //                LogUtil.e(TAG, "time :::: " + alarm.getTime());
 //                LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
@@ -43,7 +51,7 @@ public class CRUDAlarm {
 //                LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
 //                LogUtil.e(TAG, "MakeTime :::: " + alarm.getMakeTime());
 //                LogUtil.e(TAG, "MakeTime :::: " + alarm.getaSwitch());
-//                LogUtil.e(TAG, "===============================================================");
+
 
             }
         });
@@ -55,11 +63,13 @@ public class CRUDAlarm {
         RealmResults<Alarm> alarms = realm.where(Alarm.class).findAll();
         for (Alarm alarm : alarms) {
 
-            LogUtil.e(TAG, "==========================등록된내용============================");
-            LogUtil.e(TAG, "Hour     :::: " + alarm.getHour());
-            LogUtil.e(TAG, "Minute   :::: " + alarm.getMinute());
-            LogUtil.e(TAG, "MakeTime :::: " + alarm.getMakeTime());
-            LogUtil.e(TAG, "===============================================================");
+//            LogUtil.e(TAG, "==========================저장된내용============================");
+//            LogUtil.e(TAG, "Hour     :::: " + alarm.getHour());
+//            LogUtil.e(TAG, "Minute   :::: " + alarm.getMinute());
+//            LogUtil.e(TAG, "Switch Postion   :::: " + alarm.getSwitchMaketime());
+//            LogUtil.e(TAG, "switch   :::: " + alarm.getaSwitch());
+//            LogUtil.e(TAG, "MakeTime :::: " + alarm.getMakeTime());
+//            LogUtil.e(TAG, "===============================================================");
         }
 
         return alarms;
@@ -70,7 +80,7 @@ public class CRUDAlarm {
                                         String mon, String tue,
                                         String wed, String thu,
                                         String fri, String sat, String sun,
-                                        long makeTime, int aSwitch) {
+                                        long makeTime) {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         Alarm alarm = realm.where(Alarm.class).equalTo("makeTime", makeTime).findFirst();
@@ -84,14 +94,16 @@ public class CRUDAlarm {
         alarm.setFri(fri);
         alarm.setSat(sat);
         alarm.setSun(sun);
-        alarm.setaSwitch(aSwitch);
 
         realm.insertOrUpdate(alarm);
         realm.commitTransaction();
 
         LogUtil.e(TAG, "============================수정된 내용===============================");
-        LogUtil.e(TAG, "Hour :::: " + alarm.getHour());
-        LogUtil.e(TAG, "Minute :::: " + alarm.getMinute());
+        LogUtil.e(TAG, "Hour     :::: " + alarm.getHour());
+        LogUtil.e(TAG, "Minute   :::: " + alarm.getMinute());
+        LogUtil.e(TAG, "Switch Postion   :::: " + alarm.getSwitchMaketime());
+        LogUtil.e(TAG, "switch   :::: " + alarm.getaSwitch());
+        LogUtil.e(TAG, "MakeTime :::: " + alarm.getMakeTime());
 //        LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
 //        LogUtil.e(TAG, "Tue :::: " + alarm.getTue());
 //        LogUtil.e(TAG, "Wed :::: " + alarm.getWed());
@@ -99,10 +111,33 @@ public class CRUDAlarm {
 //        LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
 //        LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
 //        LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
-        LogUtil.e(TAG, "Position :::: " + alarm.getMakeTime());
+        LogUtil.e(TAG, "====================================================================");
+    }
+
+    public final static void updateSwitch(long switchMaketime, int aSwitch) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        Alarm alarm = realm.where(Alarm.class).equalTo("makeTime", switchMaketime).findFirst();
+        alarm.setaSwitch(aSwitch);
+
+        realm.insertOrUpdate(alarm);
+        realm.commitTransaction();
+
+        LogUtil.e(TAG, "============================Switch 수정==============================");
+        LogUtil.e(TAG, "Hour     :::: " + alarm.getHour());
+        LogUtil.e(TAG, "Minute   :::: " + alarm.getMinute());
+        LogUtil.e(TAG, "Switch Postion   :::: " + alarm.getSwitchMaketime());
+        LogUtil.e(TAG, "switch   :::: " + alarm.getaSwitch());
+        LogUtil.e(TAG, "MakeTime :::: " + alarm.getMakeTime());
+//        LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
+//        LogUtil.e(TAG, "Tue :::: " + alarm.getTue());
+//        LogUtil.e(TAG, "Wed :::: " + alarm.getWed());
+//        LogUtil.e(TAG, "Thu :::: " + alarm.getThu());
+//        LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
+//        LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
+//        LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
 //        LogUtil.e(TAG, "aSwitch :::: " + alarm.getaSwitch());
         LogUtil.e(TAG, "====================================================================");
-
 
     }
 
@@ -141,19 +176,20 @@ public class CRUDAlarm {
         Realm realm = Realm.getDefaultInstance();
         Alarm alarm = realm.where(Alarm.class).equalTo("makeTime", makeTime).findFirst();
 
-        LogUtil.e(TAG, "============================불러오기===============================");
-        LogUtil.e(TAG, "Hour :::: " + alarm.getHour());
-        LogUtil.e(TAG, "Minute :::: " + alarm.getMinute());
-//        LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
-//        LogUtil.e(TAG, "Tue :::: " + alarm.getTue());
-//        LogUtil.e(TAG, "Wed :::: " + alarm.getWed());
-//        LogUtil.e(TAG, "Thu :::: " + alarm.getThu());
-//        LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
-//        LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
-//        LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
-        LogUtil.e(TAG, "Position :::: " + alarm.getMakeTime());
-//        LogUtil.e(TAG, "Switch :::: " + alarm.getaSwitch());
-        LogUtil.e(TAG, "===============================================================");
+//        LogUtil.e(TAG, "============================불러오기===============================");
+//        LogUtil.e(TAG, "Hour :::: " + alarm.getHour());
+//        LogUtil.e(TAG, "Minute :::: " + alarm.getMinute());
+////        LogUtil.e(TAG, "Mon :::: " + alarm.getMon());
+////        LogUtil.e(TAG, "Tue :::: " + alarm.getTue());
+////        LogUtil.e(TAG, "Wed :::: " + alarm.getWed());
+////        LogUtil.e(TAG, "Thu :::: " + alarm.getThu());
+////        LogUtil.e(TAG, "Fri :::: " + alarm.getFri());
+////        LogUtil.e(TAG, "Sat :::: " + alarm.getSat());
+////        LogUtil.e(TAG, "Sun :::: " + alarm.getSun());
+//        LogUtil.e(TAG, "Switch   :::: " + alarm.getSwitchMaketime());
+//        LogUtil.e(TAG, "Position :::: " + alarm.getMakeTime());
+////        LogUtil.e(TAG, "Switch :::: " + alarm.getaSwitch());
+//        LogUtil.e(TAG, "===============================================================");
 
         return alarm;
     }

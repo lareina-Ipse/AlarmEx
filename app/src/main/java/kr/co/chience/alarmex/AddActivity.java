@@ -28,7 +28,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
     private static final String TAG = AddActivity.class.getSimpleName();
 
     TimePicker timePicker;
-    int aHourday, aMinute, aSwitch;
+    int aHourday, aMinute;
     boolean activity = true;
     Intent intent;
     Button buttonSave;
@@ -281,8 +281,9 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         alarm.setSun(sSun);
         alarm.setHour(String.format("%02d", aHourday));
         alarm.setMinute(String.format("%02d", aMinute));
-        alarm.setaSwitch(aSwitch);
+        alarm.setaSwitch(0);
         alarm.setMakeTime(System.currentTimeMillis());
+        alarm.setSwitchMaketime(System.currentTimeMillis());
 
         CRUDAlarm.addAlarm(alarm);
         finishAffinity();
@@ -293,7 +294,7 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
         aHourday = timePicker.getHour();
         aMinute = timePicker.getMinute();
 
-        CRUDAlarm.updateInfo(String.format("%02d", aHourday), String.format("%02d", aMinute), sMon, sTue, sWed, sThu, sFri, sSat, sSun, makeTime, aSwitch);
+        CRUDAlarm.updateInfo(String.format("%02d", aHourday), String.format("%02d", aMinute), sMon, sTue, sWed, sThu, sFri, sSat, sSun, makeTime);
 
         finishAffinity();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -323,57 +324,6 @@ public class AddActivity extends AppCompatActivity implements BaseInterface, Vie
 
         timePicker.setHour(hour);
         timePicker.setMinute(minute);
-
-    }
-
-    private void multiAlarm() {
-        List<Alarm> alarms;
-        alarms = CRUDAlarm.readAllAlarm();
-
-        Intent intent = null;
-        int hour = 0;
-        int minute = 0;
-        long alarmTime = 0;
-        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        long interval = 1000 * 60 * 60 * 24;
-
-        LogUtil.e(TAG, "Alarms Size ::::: " + alarms.size());
-
-        if (alarms.size() != 0) {
-            for (int i = 0; i < alarms.size(); i++) {
-                LogUtil.e(TAG, "Alarms Get  :::::" + alarms.get(i));
-
-                hour = Integer.parseInt(alarms.get(i).getHour());
-                minute = Integer.parseInt(alarms.get(i).getMinute());
-
-                Calendar calendar = new GregorianCalendar();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
-                calendar.set(Calendar.SECOND, 0);
-                alarmTime = calendar.getTimeInMillis();
-
-                LogUtil.e(TAG, "Hour   :: " + hour);
-                LogUtil.e(TAG, "Minute :: " + minute);
-
-                //현 시간에서 지나간 시간이면 다음 날로 지정
-                if (calendar.before(Calendar.getInstance())) {
-                    calendar.add(Calendar.DATE, 1);
-                    int month, date;
-                    month = calendar.get(Calendar.MONTH) + 1 ;
-                    date = calendar.get(Calendar.DATE);
-                    LogUtil.e(TAG, "Calender ::: " + month + " / " + date );
-                }
-
-                intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-                intent.putExtra("state", "on");
-
-                PendingIntent sender = PendingIntent.getBroadcast(getApplicationContext(), i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-
-            }
-
-        }
 
     }
 
