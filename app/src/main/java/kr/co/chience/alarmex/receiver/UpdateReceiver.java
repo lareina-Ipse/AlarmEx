@@ -21,13 +21,10 @@ public class UpdateReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-         if (intent.getAction().equals(Intent.ACTION_PACKAGE_REPLACED)) {
             LogUtil.e(TAG, "Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             LogUtil.e(TAG, "Update >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
             multiAlarm(context);
-
-        }
     }
 
     private void multiAlarm(Context context) {
