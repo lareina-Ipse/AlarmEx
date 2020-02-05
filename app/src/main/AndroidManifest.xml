@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ServiceActivity"></activity>
+        <activity android:name=".ServiceActivity" />
         <activity android:name=".AlarmActivity" />
         <activity android:name=".AddActivity" />
         <activity android:name=".MainActivity">
@@ -26,39 +26,30 @@
             </intent-filter>
         </activity>
 
-
         <receiver
             android:name=".receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="false" />
-
         <receiver
             android:name=".receiver.RestartReceiver"
             android:enabled="true"
             android:exported="false">
-
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-
             </intent-filter>
-
         </receiver>
-
-        <receiver android:name=".receiver.UpdateReceiver"
+        <receiver
+            android:name=".receiver.UpdateReceiver"
             android:enabled="true"
             android:exported="false">
-
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
-
         </receiver>
 
         <service
             android:name=".service.AlarmService"
             android:enabled="true" />
-
-
     </application>
 
 </manifest>

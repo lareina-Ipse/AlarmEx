@@ -4,7 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+
+import java.util.Calendar;
+import java.util.List;
+
 import kr.co.chience.alarmex.Util.LogUtil;
+import kr.co.chience.alarmex.clud.CRUDAlarm;
+import kr.co.chience.alarmex.model.Alarm;
 import kr.co.chience.alarmex.service.AlarmService;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -14,6 +20,57 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        Calendar today = Calendar.getInstance();
+        int week = today.get(Calendar.DAY_OF_WEEK);
+        List<Alarm> alarms;
+        alarms = CRUDAlarm.readAllAlarm();
+
+        if (alarms.size() != 0) {
+            for (int i = 0; i < alarms.size(); i++) {
+                switch (week) {
+                    case 1:
+                        if (alarms.get(i).getSun() != null) {
+                            sendReceive(context, intent);
+                        }
+                        break;
+                    case 2:
+                        if (alarms.get(i).getMon() != null) {
+                            sendReceive(context, intent);
+                        }
+                        break;
+                    case 3:
+                        if (alarms.get(i).getTue() != null) {
+                            sendReceive(context, intent);
+                        }
+                        break;
+                    case 4:
+                        if (alarms.get(i).getWed() != null) {
+                            sendReceive(context, intent);
+                        }
+                        break;
+                    case 5:
+                        if (alarms.get(i).getThu() != null) {
+                            sendReceive(context, intent);
+                        }
+                        break;
+                    case 6:
+                        if (alarms.get(i).getFri() != null) {
+                            sendReceive(context, intent);
+                        }
+                        break;
+                    case 7:
+                        if (alarms.get(i).getSat() != null) {
+                            sendReceive(context, intent);
+                        }
+                        break;
+                }
+            }
+        }
+
+    }
+
+    public void sendReceive(Context context, Intent intent) {
         Intent alarmState = new Intent(context, AlarmService.class);
         alarmState.putExtra("state", intent.getStringExtra("state"));
 
@@ -23,9 +80,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         } else {
             context.startService(alarmState);
         }
+
         LogUtil.e(TAG, "Put State------->" + intent.getStringExtra("state"));
     }
-
 
 
 }
